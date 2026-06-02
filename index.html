@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THE BEST IN JEST • ONLINE V8</title>
+  <title>THE BEST IN JEST • ONLINE V9</title>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <style>
@@ -13,12 +13,11 @@
     .container { max-width:1100px; margin:0 auto; padding:20px; }
     .forehead-row { display:flex; justify-content:center; gap:40px; margin:30px 0; flex-wrap:wrap; }
     .character-display { width:320px; height:320px; border:12px solid #00ffff; border-radius:30px; box-shadow:0 0 50px #ff00ff; overflow:hidden; position:relative; background:#000; }
-    .character-display img { width:100%; height:100%; object-fit:contain; transition:opacity 0.3s; }
+    .character-display img { width:100%; height:100%; object-fit:contain; }
     .hidden-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; align-items:center; justify-content:center; flex-direction:column; color:#ff00ff; font-size:2.8rem; text-shadow:0 0 30px #ffff00; }
-    .fallback-name { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:2.2rem; color:#ffff00; text-shadow:0 0 20px #ff00ff; background:rgba(0,0,0,0.85); }
-    .loading { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.8); color:#00ffff; font-size:1.4rem; }
-    button { background:#ff00ff; color:#000; font-family:'Press Start 2P'; padding:18px 40px; font-size:1.3rem; margin:15px; border:none; border-radius:15px; box-shadow:8px 8px 0 #00ffff; cursor:pointer; }
+    button { background:#ff00ff; color:#000; font-family:'Press Start 2P'; padding:18px 40px; font-size:1.3rem; margin:10px; border:none; border-radius:15px; box-shadow:8px 8px 0 #00ffff; cursor:pointer; }
     button:hover { background:#00ffff; color:#ff00ff; transform:scale(1.1); }
+    .wiki-btn { background:#00ffff; color:#000; font-size:1rem; padding:8px 16px; margin-top:10px; }
     input { padding:18px; width:70%; font-size:1.3rem; margin:15px 0; border-radius:10px; }
     .log { background:#000; color:#0f0; padding:20px; margin:25px auto; max-width:800px; height:200px; overflow-y:auto; border:5px solid #00ffff; text-align:left; font-size:1rem; }
     .status { font-size:1.5rem; margin:20px 0; }
@@ -28,7 +27,7 @@
   </style>
 </head>
 <body>
-  <div class="header">THE BEST IN JEST • ONLINE V8</div>
+  <div class="header">THE BEST IN JEST • ONLINE V9</div>
   <div class="container" id="app"></div>
 
   <script>
@@ -46,42 +45,19 @@
     let app, db, roomRef, mySlot, myChar, opponentChar, currentRoomCode, currentTurn;
 
     const characters = [
-      {name:"Pikachu",img:"https://upload.wikimedia.org/wikipedia/en/a/a6/Pok%C3%A9mon_Pikachu_artwork.png"},
-      {name:"Mario",img:"https://upload.wikimedia.org/wikipedia/en/a/a9/Mario_NSMBU.png"},
-      {name:"SpongeBob",img:"https://upload.wikimedia.org/wikipedia/en/3/3b/Spongebob-squarepants.png"},
-      {name:"Batman",img:"https://upload.wikimedia.org/wikipedia/en/7/7b/Batman_%28comic_book_character%29.jpg"},
-      {name:"Darth Vader",img:"https://upload.wikimedia.org/wikipedia/en/3/32/Darth_Vader_%28Star_Wars%29.jpg"},
-      {name:"Sonic",img:"https://upload.wikimedia.org/wikipedia/en/3/3b/Sonic_the_Hedgehog.png"},
-      {name:"Goku",img:"https://upload.wikimedia.org/wikipedia/en/5/5f/Goku_%28Dragon_Ball%29.png"},
-      {name:"Wonder Woman",img:"https://upload.wikimedia.org/wikipedia/en/9/93/Wonder_Woman_%28comic_book_character%29.jpg"},
-      {name:"Elsa",img:"https://upload.wikimedia.org/wikipedia/en/9/9e/Elsa_from_Disney%27s_Frozen.png"},
-      {name:"Luigi",img:"https://upload.wikimedia.org/wikipedia/en/9/99/Luigi_NSMBU.png"},
-      {name:"Princess Peach",img:"https://upload.wikimedia.org/wikipedia/en/a/a0/Peach_NSMBU.png"},
-      {name:"Bowser",img:"https://upload.wikimedia.org/wikipedia/en/4/4f/Bowser_NSMBU.png"},
-      {name:"Link",img:"https://upload.wikimedia.org/wikipedia/en/3/3f/Link_from_The_Legend_of_Zelda.png"},
-      {name:"Steve",img:"https://upload.wikimedia.org/wikipedia/en/5/56/Minecraft_Steve.png"},
-      {name:"Mickey Mouse",img:"https://upload.wikimedia.org/wikipedia/en/7/7d/Mickey_Mouse.png"},
-      {name:"Bugs Bunny",img:"https://upload.wikimedia.org/wikipedia/en/2/2d/Bugs_Bunny.png"},
-      {name:"Homer Simpson",img:"https://upload.wikimedia.org/wikipedia/en/0/0b/Homer_Simpson.png"},
-      {name:"Shrek",img:"https://upload.wikimedia.org/wikipedia/en/4/4f/Shrek_%28character%29.png"},
-      {name:"Iron Man",img:"https://upload.wikimedia.org/wikipedia/en/0/00/Iron_Man_%28Marvel_Cinematic_Universe%29.png"},
-      {name:"Naruto Uzumaki",img:"https://upload.wikimedia.org/wikipedia/en/9/94/NarutoUzumaki.png"},
-      {name:"Monkey D. Luffy",img:"https://upload.wikimedia.org/wikipedia/en/1/1a/Luffy.png"},
-      {name:"Thor",img:"https://upload.wikimedia.org/wikipedia/en/2/2a/Thor_%28Marvel_Comics%29.png"},
-      {name:"Yoda",img:"https://upload.wikimedia.org/wikipedia/en/9/9b/Star_Wars_Yoda.png"},
-      {name:"Deadpool",img:"https://upload.wikimedia.org/wikipedia/en/0/0f/Deadpool_%28character%29.png"},
-      {name:"Joker",img:"https://upload.wikimedia.org/wikipedia/en/3/3f/Joker_%28Heath_Ledger%29.png"},
-      {name:"Hulk",img:"https://upload.wikimedia.org/wikipedia/en/5/5f/Hulk_%28Marvel_Comics%29.png"},
-      {name:"Captain America",img:"https://upload.wikimedia.org/wikipedia/en/9/9f/Captain_America_%28comic_book_character%29.png"},
-      {name:"Black Panther",img:"https://upload.wikimedia.org/wikipedia/en/6/6f/Black_Panther_%28Marvel_Comics%29.png"},
-      {name:"Doraemon",img:"https://upload.wikimedia.org/wikipedia/en/4/4f/Doraemon.png"},
-      {name:"Ash Ketchum",img:"https://upload.wikimedia.org/wikipedia/en/7/7e/Ash_Ketchum.png"}
+      {name:"Pikachu",img:"./characters/pikachu.png", wiki:"https://en.wikipedia.org/wiki/Pikachu"},
+      {name:"Mario",img:"./characters/mario.png", wiki:"https://en.wikipedia.org/wiki/Mario"},
+      {name:"SpongeBob",img:"./characters/spongebob.png", wiki:"https://en.wikipedia.org/wiki/SpongeBob_SquarePants"},
+      {name:"Batman",img:"./characters/batman.png", wiki:"https://en.wikipedia.org/wiki/Batman"},
+      {name:"Darth Vader",img:"./characters/darthvader.png", wiki:"https://en.wikipedia.org/wiki/Darth_Vader"},
+      {name:"Sonic",img:"./characters/sonic.png", wiki:"https://en.wikipedia.org/wiki/Sonic_the_Hedgehog"},
+      {name:"Goku",img:"./characters/goku.png", wiki:"https://en.wikipedia.org/wiki/Goku"},
+      {name:"Wonder Woman",img:"./characters/wonderwoman.png", wiki:"https://en.wikipedia.org/wiki/Wonder_Woman"},
+      {name:"Elsa",img:"./characters/elsa.png", wiki:"https://en.wikipedia.org/wiki/Elsa_(Frozen)"},
+      {name:"Shrek",img:"./characters/shrek.png", wiki:"https://en.wikipedia.org/wiki/Shrek_(character)"},
+      {name:"Iron Man",img:"./characters/ironman.png", wiki:"https://en.wikipedia.org/wiki/Iron_Man"},
+      {name:"Yoda",img:"./characters/yoda.png", wiki:"https://en.wikipedia.org/wiki/Yoda"}
     ];
-
-    // OPTION 1 — NO PROXY (exactly what was suggested)
-    function getProxiedImg(url) {
-      return url; // direct URLs only
-    }
 
     function initFirebase() { app = firebase.initializeApp(firebaseConfig); db = firebase.database(); }
     function generateRoomCode() {
@@ -94,7 +70,7 @@
         <h2>READY TO GO REMOTE?</h2>
         <button onclick="createRoom()">CREATE ROOM (Host)</button>
         <button onclick="showJoinScreen()">JOIN ROOM (Friend)</button>
-        <p style="margin-top:40px;color:#00ffff;">V8 • DIRECT URLs (no proxy) — exactly what was suggested!</p>
+        <p style="margin-top:40px;color:#00ffff;">V9 • Wiki links + "I don't know" button added!</p>
       `;
     }
 
@@ -165,11 +141,13 @@
           <div>
             <div class="label">FRIEND'S FOREHEAD</div>
             <div class="character-display" id="opponentChar"></div>
+            <button class="wiki-btn" onclick="openWiki()">📖 Wiki Page</button>
           </div>
         </div>
         <p>Ask your ONE question out loud → they answer via voice → then guess:</p>
         <input type="text" id="guessInput" placeholder="TYPE YOUR GUESS" onkeypress="if(event.key==='Enter') makeGuess()">
         <button onclick="makeGuess()">LOCK IN GUESS 🔥</button>
+        <button onclick="dontKnow()">I DON'T KNOW WHO THE HELL THIS IS</button>
         <button onclick="skipTurn()">Skip Turn (wrong guess)</button>
         <div class="log" id="log"></div>
       `;
@@ -179,14 +157,11 @@
     function updateOpponentImage() {
       const display = document.getElementById("opponentChar");
       if (!display || !opponentChar) return;
+      display.innerHTML = `<img src="${opponentChar.img}" alt="${opponentChar.name}">`;
+    }
 
-      const directUrl = getProxiedImg(opponentChar.img);
-      display.innerHTML = `
-        <div class="loading">LOADING PICTURE...</div>
-        <img src="${directUrl}" alt="${opponentChar.name}" 
-             onload="this.previousElementSibling.style.display='none'; this.style.opacity=1;"
-             onerror="this.style.display='none'; this.parentNode.innerHTML = '<div class=\\'fallback-name\\'>${opponentChar.name}</div>';">
-      `;
+    function openWiki() {
+      if (opponentChar && opponentChar.wiki) window.open(opponentChar.wiki, '_blank');
     }
 
     function makeGuess() {
@@ -198,8 +173,7 @@
           <h1 class="winner">🎉 YOU GOT IT! 🎉</h1>
           <p><strong>${myChar.name}</strong> was on YOUR forehead!</p>
           <div class="character-display" style="width:280px;height:280px;margin:20px auto;">
-            <img src="${getProxiedImg(myChar.img)}" alt="${myChar.name}" 
-                 onload="this.style.opacity=1" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\\'fallback-name\\' style=\\'font-size:3rem\\'>${myChar.name}</div>';">
+            <img src="${myChar.img}" alt="${myChar.name}">
           </div>
           <button onclick="newRound()">NEW ROUND IN SAME ROOM</button>
         `;
@@ -208,6 +182,12 @@
         log.innerHTML += `<p style="color:#ff00ff;">❌ WRONG — You said: ${guess}</p>`;
         document.getElementById("guessInput").value = "";
         skipTurn();
+      }
+    }
+
+    function dontKnow() {
+      if (confirm("Reset the round with new characters?")) {
+        newRound();
       }
     }
 
