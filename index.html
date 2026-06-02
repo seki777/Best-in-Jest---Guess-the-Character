@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THE BEST IN JEST • ONLINE V7</title>
+  <title>THE BEST IN JEST • ONLINE V8</title>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <style>
@@ -28,7 +28,7 @@
   </style>
 </head>
 <body>
-  <div class="header">THE BEST IN JEST • ONLINE V7</div>
+  <div class="header">THE BEST IN JEST • ONLINE V8</div>
   <div class="container" id="app"></div>
 
   <script>
@@ -78,8 +78,9 @@
       {name:"Ash Ketchum",img:"https://upload.wikimedia.org/wikipedia/en/7/7e/Ash_Ketchum.png"}
     ];
 
+    // OPTION 1 — NO PROXY (exactly what was suggested)
     function getProxiedImg(url) {
-      return `https://images.weserv.nl/?url=` + encodeURIComponent(url);
+      return url; // direct URLs only
     }
 
     function initFirebase() { app = firebase.initializeApp(firebaseConfig); db = firebase.database(); }
@@ -93,7 +94,7 @@
         <h2>READY TO GO REMOTE?</h2>
         <button onclick="createRoom()">CREATE ROOM (Host)</button>
         <button onclick="showJoinScreen()">JOIN ROOM (Friend)</button>
-        <p style="margin-top:40px;color:#00ffff;">V7 • Using weserv.nl proxy (exactly what was suggested)!</p>
+        <p style="margin-top:40px;color:#00ffff;">V8 • DIRECT URLs (no proxy) — exactly what was suggested!</p>
       `;
     }
 
@@ -179,10 +180,10 @@
       const display = document.getElementById("opponentChar");
       if (!display || !opponentChar) return;
 
-      const proxied = getProxiedImg(opponentChar.img);
+      const directUrl = getProxiedImg(opponentChar.img);
       display.innerHTML = `
         <div class="loading">LOADING PICTURE...</div>
-        <img src="${proxied}" alt="${opponentChar.name}" 
+        <img src="${directUrl}" alt="${opponentChar.name}" 
              onload="this.previousElementSibling.style.display='none'; this.style.opacity=1;"
              onerror="this.style.display='none'; this.parentNode.innerHTML = '<div class=\\'fallback-name\\'>${opponentChar.name}</div>';">
       `;
