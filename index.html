@@ -3,31 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THE BEST IN JEST • ONLINE V9</title>
+  <title>THE BEST IN JEST • ONLINE V1.21</title>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-    body { margin:0; padding:0; background:linear-gradient(45deg,#0f0f0f,#1a0033); color:#fff; font-family:'Press Start 2P',system-ui; text-align:center; overflow:hidden; }
-    .header { background:#ff00ff; color:#000; padding:20px; font-size:2.4rem; text-shadow:4px 4px 0 #00ffff; }
-    .container { max-width:1100px; margin:0 auto; padding:20px; }
+    body { margin:0; padding:0; background:linear-gradient(45deg,#0f0f0f,#1a0033); color:#fff; font-family:'Press Start 2P',system-ui; text-align:center; overflow-y:auto; }
+    .header { background:#ff00ff; color:#000; padding:20px; font-size:2.2rem; text-shadow:4px 4px 0 #00ffff; }
+    .container { max-width:1100px; margin:0 auto; padding:20px 20px 80px; }
     .forehead-row { display:flex; justify-content:center; gap:40px; margin:30px 0; flex-wrap:wrap; }
     .character-display { width:320px; height:320px; border:12px solid #00ffff; border-radius:30px; box-shadow:0 0 50px #ff00ff; overflow:hidden; position:relative; background:#000; }
     .character-display img { width:100%; height:100%; object-fit:contain; }
     .hidden-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; align-items:center; justify-content:center; flex-direction:column; color:#ff00ff; font-size:2.8rem; text-shadow:0 0 30px #ffff00; }
-    button { background:#ff00ff; color:#000; font-family:'Press Start 2P'; padding:18px 40px; font-size:1.3rem; margin:10px; border:none; border-radius:15px; box-shadow:8px 8px 0 #00ffff; cursor:pointer; }
+    button { background:#ff00ff; color:#000; font-family:'Press Start 2P'; padding:18px 40px; font-size:1.1rem; margin:10px; border:none; border-radius:15px; box-shadow:8px 8px 0 #00ffff; cursor:pointer; }
     button:hover { background:#00ffff; color:#ff00ff; transform:scale(1.1); }
-    .wiki-btn { background:#00ffff; color:#000; font-size:1rem; padding:8px 16px; margin-top:10px; }
+    .wiki-btn { background:#00ffff; color:#000; font-size:0.95rem; padding:8px 16px; margin-top:10px; }
     input { padding:18px; width:70%; font-size:1.3rem; margin:15px 0; border-radius:10px; }
-    .log { background:#000; color:#0f0; padding:20px; margin:25px auto; max-width:800px; height:200px; overflow-y:auto; border:5px solid #00ffff; text-align:left; font-size:1rem; }
-    .status { font-size:1.5rem; margin:20px 0; }
-    .winner { animation:flash 0.5s infinite; font-size:4rem; color:#ffff00; text-shadow:0 0 30px #ff00ff; }
+    .log { background:#000; color:#0f0; padding:20px; margin:25px auto; max-width:800px; height:180px; overflow-y:auto; border:5px solid #00ffff; text-align:left; font-size:1rem; }
+    .status { font-size:1.4rem; margin:20px 0; }
+    .winner { animation:flash 0.5s infinite; font-size:3.5rem; color:#ffff00; text-shadow:0 0 30px #ff00ff; }
+    .flavor-text { margin-top:40px; font-size:0.85rem; color:#888; }
     @keyframes flash { 50% { color:#ff00ff; } }
     .label { font-size:1.1rem; margin-bottom:8px; color:#00ffff; }
   </style>
 </head>
 <body>
-  <div class="header">THE BEST IN JEST • ONLINE V9</div>
+  <div class="header">THE BEST IN JEST • ONLINE V1.21</div>
   <div class="container" id="app"></div>
 
   <script>
@@ -45,18 +46,326 @@
     let app, db, roomRef, mySlot, myChar, opponentChar, currentRoomCode, currentTurn;
 
     const characters = [
-      {name:"Pikachu",img:"./characters/pikachu.png", wiki:"https://en.wikipedia.org/wiki/Pikachu"},
-      {name:"Mario",img:"./characters/mario.png", wiki:"https://en.wikipedia.org/wiki/Mario"},
-      {name:"SpongeBob",img:"./characters/spongebob.png", wiki:"https://en.wikipedia.org/wiki/SpongeBob_SquarePants"},
-      {name:"Batman",img:"./characters/batman.png", wiki:"https://en.wikipedia.org/wiki/Batman"},
-      {name:"Darth Vader",img:"./characters/darthvader.png", wiki:"https://en.wikipedia.org/wiki/Darth_Vader"},
-      {name:"Sonic",img:"./characters/sonic.png", wiki:"https://en.wikipedia.org/wiki/Sonic_the_Hedgehog"},
-      {name:"Goku",img:"./characters/goku.png", wiki:"https://en.wikipedia.org/wiki/Goku"},
-      {name:"Wonder Woman",img:"./characters/wonderwoman.png", wiki:"https://en.wikipedia.org/wiki/Wonder_Woman"},
-      {name:"Elsa",img:"./characters/elsa.png", wiki:"https://en.wikipedia.org/wiki/Elsa_(Frozen)"},
-      {name:"Shrek",img:"./characters/shrek.png", wiki:"https://en.wikipedia.org/wiki/Shrek_(character)"},
-      {name:"Iron Man",img:"./characters/ironman.png", wiki:"https://en.wikipedia.org/wiki/Iron_Man"},
-      {name:"Yoda",img:"./characters/yoda.png", wiki:"https://en.wikipedia.org/wiki/Yoda"}
+      {name:"Aang", img:"./characters/aang.png", wiki:"https://en.wikipedia.org/wiki/Aang"},
+      {name:"AC/DC", img:"./characters/acdc.png", wiki:"https://en.wikipedia.org/wiki/AC/DC"},
+      {name:"Aladdin", img:"./characters/aladdin.png", wiki:"https://en.wikipedia.org/wiki/Aladdin"},
+      {name:"Albert Einstein", img:"./characters/alberteinstein.png", wiki:"https://en.wikipedia.org/wiki/Albert_Einstein"},
+      {name:"Alex Jones", img:"./characters/alexjones.png", wiki:"https://en.wikipedia.org/wiki/Alex_Jones"},
+      {name:"Alphonse Elric", img:"./characters/alphonseelric.png", wiki:"https://en.wikipedia.org/wiki/Alphonse_Elric"},
+      {name:"Ancient Aliens Guy", img:"./characters/ancientaliens.png", wiki:"https://en.wikipedia.org/wiki/Ancient_Aliens"},
+      {name:"Andrew Tate", img:"./characters/andrewtate.png", wiki:"https://en.wikipedia.org/wiki/Andrew_Tate"},
+      {name:"Appa", img:"./characters/appa.png", wiki:"https://en.wikipedia.org/wiki/Appa"},
+      {name:"Aragorn", img:"./characters/aragorn.png", wiki:"https://en.wikipedia.org/wiki/Aragorn"},
+      {name:"Ariana Grande", img:"./characters/arianagrande.png", wiki:"https://en.wikipedia.org/wiki/Ariana_Grande"},
+      {name:"Ariel", img:"./characters/ariel.png", wiki:"https://en.wikipedia.org/wiki/Ariel_(The_Little_Mermaid)"},
+      {name:"Arthur Morgan", img:"./characters/arthurmorgan.png", wiki:"https://en.wikipedia.org/wiki/Arthur_Morgan"},
+      {name:"Ash Ketchum", img:"./characters/ashketchum.png", wiki:"https://en.wikipedia.org/wiki/Ash_Ketchum"},
+      {name:"Asmongold", img:"./characters/asmongold.png", wiki:"https://en.wikipedia.org/wiki/Asmongold"},
+      {name:"Azula", img:"./characters/azula.png", wiki:"https://en.wikipedia.org/wiki/Azula"},
+      {name:"Bad Luck Brian", img:"./characters/badluckbrian.png", wiki:"https://en.wikipedia.org/wiki/Bad_Luck_Brian"},
+      {name:"Barack Obama", img:"./characters/barackobama.png", wiki:"https://en.wikipedia.org/wiki/Barack_Obama"},
+      {name:"Bart Simpson", img:"./characters/bartsimpson.png", wiki:"https://en.wikipedia.org/wiki/Bart_Simpson"},
+      {name:"Batman", img:"./characters/batman.png", wiki:"https://en.wikipedia.org/wiki/Batman"},
+      {name:"Baymax", img:"./characters/baymax.png", wiki:"https://en.wikipedia.org/wiki/Baymax"},
+      {name:"Beastie Boys", img:"./characters/beastieboys.png", wiki:"https://en.wikipedia.org/wiki/Beastie_Boys"},
+      {name:"Ben Shapiro", img:"./characters/benshapiro.png", wiki:"https://en.wikipedia.org/wiki/Ben_Shapiro"},
+      {name:"Benson Dunwoody", img:"./characters/bensondunwoody.png", wiki:"https://en.wikipedia.org/wiki/Benson_Dunwoody"},
+      {name:"Ben Tennyson", img:"./characters/bentennyson.png", wiki:"https://en.wikipedia.org/wiki/Ben_Tennyson"},
+      {name:"Beyoncé", img:"./characters/beyonce.png", wiki:"https://en.wikipedia.org/wiki/Beyoncé"},
+      {name:"Bill Gates", img:"./characters/billgates.png", wiki:"https://en.wikipedia.org/wiki/Bill_Gates"},
+      {name:"Billie Eilish", img:"./characters/billieeilish.png", wiki:"https://en.wikipedia.org/wiki/Billie_Eilish"},
+      {name:"Black Sabbath", img:"./characters/blacksabbath.png", wiki:"https://en.wikipedia.org/wiki/Black_Sabbath"},
+      {name:"BMO", img:"./characters/bmo.png", wiki:"https://en.wikipedia.org/wiki/BMO"},
+      {name:"Bob Belcher", img:"./characters/bobbelcher.png", wiki:"https://en.wikipedia.org/wiki/Bob_Belcher"},
+      {name:"Bobby Hill", img:"./characters/bobbyhill.png", wiki:"https://en.wikipedia.org/wiki/Bobby_Hill"},
+      {name:"Bob Marley", img:"./characters/bobmarley.png", wiki:"https://en.wikipedia.org/wiki/Bob_Marley"},
+      {name:"Bowser", img:"./characters/bowser.png", wiki:"https://en.wikipedia.org/wiki/Bowser"},
+      {name:"Brad Pitt", img:"./characters/bradpitt.png", wiki:"https://en.wikipedia.org/wiki/Brad_Pitt"},
+      {name:"Brian Griffin", img:"./characters/briangriffin.png", wiki:"https://en.wikipedia.org/wiki/Brian_Griffin"},
+      {name:"Britney Spears", img:"./characters/britneyspears.png", wiki:"https://en.wikipedia.org/wiki/Britney_Spears"},
+      {name:"Bruno Mars", img:"./characters/brunomars.png", wiki:"https://en.wikipedia.org/wiki/Bruno_Mars"},
+      {name:"Bulma", img:"./characters/bulma.png", wiki:"https://en.wikipedia.org/wiki/Bulma"},
+      {name:"Butters Stotch", img:"./characters/buttersstotch.png", wiki:"https://en.wikipedia.org/wiki/Butters_Stotch"},
+      {name:"Buzz Lightyear", img:"./characters/buzzlightyear.png", wiki:"https://en.wikipedia.org/wiki/Buzz_Lightyear"},
+      {name:"Captain Crunch", img:"./characters/captaincrunch.png", wiki:"https://en.wikipedia.org/wiki/Cap%27n_Crunch"},
+      {name:"Carl Fredricksen", img:"./characters/carlfredricksen.png", wiki:"https://en.wikipedia.org/wiki/Carl_Fredricksen"},
+      {name:"Creedence Clearwater Revival", img:"./characters/ccr.png", wiki:"https://en.wikipedia.org/wiki/Creedence_Clearwater_Revival"},
+      {name:"Chad", img:"./characters/chad.png", wiki:"https://en.wikipedia.org/wiki/Chad_(meme)"},
+      {name:"Charizard", img:"./characters/charizard.png", wiki:"https://en.wikipedia.org/wiki/Charizard"},
+      {name:"Charles Darwin", img:"./characters/charlesdarwin.png", wiki:"https://en.wikipedia.org/wiki/Charles_Darwin"},
+      {name:"Charlie Chaplin", img:"./characters/charliechaplin.png", wiki:"https://en.wikipedia.org/wiki/Charlie_Chaplin"},
+      {name:"Charlie Kirk", img:"./characters/charliekirk.png", wiki:"https://en.wikipedia.org/wiki/Charlie_Kirk"},
+      {name:"Chester Cheetah", img:"./characters/chestercheetah.png", wiki:"https://en.wikipedia.org/wiki/Chester_Cheetah"},
+      {name:"Chowder", img:"./characters/chowder.png", wiki:"https://en.wikipedia.org/wiki/Chowder_(TV_series)"},
+      {name:"Chris Pratt", img:"./characters/chrispratt.png", wiki:"https://en.wikipedia.org/wiki/Chris_Pratt"},
+      {name:"Chuck Norris", img:"./characters/chucknorris.png", wiki:"https://en.wikipedia.org/wiki/Chuck_Norris"},
+      {name:"Chun-Li", img:"./characters/chunli.png", wiki:"https://en.wikipedia.org/wiki/Chun-Li"},
+      {name:"Cleveland Brown", img:"./characters/clevelandbrown.png", wiki:"https://en.wikipedia.org/wiki/Cleveland_Brown"},
+      {name:"Cloud Strife", img:"./characters/cloudstrife.png", wiki:"https://en.wikipedia.org/wiki/Cloud_Strife"},
+      {name:"Coldplay", img:"./characters/coldplay.png", wiki:"https://en.wikipedia.org/wiki/Coldplay"},
+      {name:"Colonel Sanders", img:"./characters/colonelsanders.png", wiki:"https://en.wikipedia.org/wiki/Colonel_Sanders"},
+      {name:"Courage the Cowardly Dog", img:"./characters/courage.png", wiki:"https://en.wikipedia.org/wiki/Courage_the_Cowardly_Dog"},
+      {name:"Crash Bandicoot", img:"./characters/crashbandicoot.png", wiki:"https://en.wikipedia.org/wiki/Crash_Bandicoot"},
+      {name:"Creeper", img:"./characters/creeper.png", wiki:"https://en.wikipedia.org/wiki/Creeper_(Minecraft)"},
+      {name:"Daft Punk", img:"./characters/daftpunk.png", wiki:"https://en.wikipedia.org/wiki/Daft_Punk"},
+      {name:"Darth Vader", img:"./characters/darthvader.png", wiki:"https://en.wikipedia.org/wiki/Darth_Vader"},
+      {name:"David Bowie", img:"./characters/davidbowie.png", wiki:"https://en.wikipedia.org/wiki/David_Bowie"},
+      {name:"Deku", img:"./characters/deku.png", wiki:"https://en.wikipedia.org/wiki/Izuku_Midoriya"},
+      {name:"Doge", img:"./characters/doge.png", wiki:"https://en.wikipedia.org/wiki/Doge_(meme)"},
+      {name:"Dolly Parton", img:"./characters/dollyparton.png", wiki:"https://en.wikipedia.org/wiki/Dolly_Parton"},
+      {name:"Donald Duck", img:"./characters/donaldduck.png", wiki:"https://en.wikipedia.org/wiki/Donald_Duck"},
+      {name:"Donkey Kong", img:"./characters/donkeykong.png", wiki:"https://en.wikipedia.org/wiki/Donkey_Kong"},
+      {name:"Dr. Heinz Doofenshmirtz", img:"./characters/doofenshmirtz.png", wiki:"https://en.wikipedia.org/wiki/Dr._Heinz_Doofenshmirtz"},
+      {name:"Dory", img:"./characters/dory.png", wiki:"https://en.wikipedia.org/wiki/Dory_(Finding_Nemo)"},
+      {name:"Drake", img:"./characters/drake.png", wiki:"https://en.wikipedia.org/wiki/Drake_(musician)"},
+      {name:"Dr. Eggman", img:"./characters/dreggman.png", wiki:"https://en.wikipedia.org/wiki/Dr._Eggman"},
+      {name:"Ed", img:"./characters/ed.png", wiki:"https://en.wikipedia.org/wiki/Ed_(Ed,_Edd_n_Eddy)"},
+      {name:"Edd (Double D)", img:"./characters/edd.png", wiki:"https://en.wikipedia.org/wiki/Edd_(Ed,_Edd_n_Eddy)"},
+      {name:"Eddy", img:"./characters/eddy.png", wiki:"https://en.wikipedia.org/wiki/Eddy_(Ed,_Edd_n_Eddy)"},
+      {name:"Edward Elric", img:"./characters/edwardelric.png", wiki:"https://en.wikipedia.org/wiki/Edward_Elric"},
+      {name:"Ellen Ripley", img:"./characters/ellenripley.png", wiki:"https://en.wikipedia.org/wiki/Ellen_Ripley"},
+      {name:"Elon Musk", img:"./characters/elonmusk.png", wiki:"https://en.wikipedia.org/wiki/Elon_Musk"},
+      {name:"Elsa", img:"./characters/elsa.png", wiki:"https://en.wikipedia.org/wiki/Elsa_(Frozen)"},
+      {name:"Elvis Presley", img:"./characters/elvispresley.png", wiki:"https://en.wikipedia.org/wiki/Elvis_Presley"},
+      {name:"Eminem", img:"./characters/eminem.png", wiki:"https://en.wikipedia.org/wiki/Eminem"},
+      {name:"Emma Watson", img:"./characters/emmawatson.png", wiki:"https://en.wikipedia.org/wiki/Emma_Watson"},
+      {name:"Eric Cartman", img:"./characters/ericcartman.png", wiki:"https://en.wikipedia.org/wiki/Eric_Cartman"},
+      {name:"Faye Valentine", img:"./characters/fayevalentine.png", wiki:"https://en.wikipedia.org/wiki/Faye_Valentine"},
+      {name:"Ferb Fletcher", img:"./characters/ferbfletcher.png", wiki:"https://en.wikipedia.org/wiki/Ferb_Fletcher"},
+      {name:"Finn the Human", img:"./characters/finnthehuman.png", wiki:"https://en.wikipedia.org/wiki/Finn_the_Human"},
+      {name:"Foo Fighters", img:"./characters/foofighters.png", wiki:"https://en.wikipedia.org/wiki/Foo_Fighters"},
+      {name:"Forrest Gump", img:"./characters/forrestgump.png", wiki:"https://en.wikipedia.org/wiki/Forrest_Gump"},
+      {name:"Francine Smith", img:"./characters/francinesmith.png", wiki:"https://en.wikipedia.org/wiki/Francine_Smith"},
+      {name:"Freddie Mercury", img:"./characters/freddiemercury.png", wiki:"https://en.wikipedia.org/wiki/Freddie_Mercury"},
+      {name:"Freddy Krueger", img:"./characters/freddykrueger.png", wiki:"https://en.wikipedia.org/wiki/Freddy_Krueger"},
+      {name:"Frieza", img:"./characters/frieza.png", wiki:"https://en.wikipedia.org/wiki/Frieza"},
+      {name:"Philip J. Fry", img:"./characters/fry.png", wiki:"https://en.wikipedia.org/wiki/Philip_J._Fry"},
+      {name:"Gandalf", img:"./characters/gandalf.png", wiki:"https://en.wikipedia.org/wiki/Gandalf"},
+      {name:"Mahatma Gandhi", img:"./characters/gandhi.png", wiki:"https://en.wikipedia.org/wiki/Mahatma_Gandhi"},
+      {name:"Ganondorf", img:"./characters/ganondorf.png", wiki:"https://en.wikipedia.org/wiki/Ganondorf"},
+      {name:"Genie", img:"./characters/genie.png", wiki:"https://en.wikipedia.org/wiki/Genie_(Disney)"},
+      {name:"George Floyd", img:"./characters/georgefloyd.png", wiki:"https://en.wikipedia.org/wiki/George_Floyd"},
+      {name:"George W. Bush", img:"./characters/georgewbushjr.png", wiki:"https://en.wikipedia.org/wiki/George_W._Bush"},
+      {name:"Geralt of Rivia", img:"./characters/geraltofrivia.png", wiki:"https://en.wikipedia.org/wiki/Geralt_of_Rivia"},
+      {name:"Satoru Gojo", img:"./characters/gojo.png", wiki:"https://en.wikipedia.org/wiki/Satoru_Gojo"},
+      {name:"Goku", img:"./characters/Goku.png", wiki:"https://en.wikipedia.org/wiki/Goku"},
+      {name:"Gollum", img:"./characters/gollum.png", wiki:"https://en.wikipedia.org/wiki/Gollum"},
+      {name:"Goofy", img:"./characters/goofy.png", wiki:"https://en.wikipedia.org/wiki/Goofy"},
+      {name:"Gorillaz", img:"./characters/gorillaz.png", wiki:"https://en.wikipedia.org/wiki/Gorillaz"},
+      {name:"Green Day", img:"./characters/greenday.png", wiki:"https://en.wikipedia.org/wiki/Green_Day"},
+      {name:"Greta Thunberg", img:"./characters/gretathunberg.png", wiki:"https://en.wikipedia.org/wiki/Greta_Thunberg"},
+      {name:"Grimace", img:"./characters/grimace.png", wiki:"https://en.wikipedia.org/wiki/Grimace"},
+      {name:"Gumball Watterson", img:"./characters/gumballwatterson.png", wiki:"https://en.wikipedia.org/wiki/Gumball_Watterson"},
+      {name:"Hades", img:"./characters/hades.png", wiki:"https://en.wikipedia.org/wiki/Hades_(Disney)"},
+      {name:"Hank Hill", img:"./characters/hankhill.png", wiki:"https://en.wikipedia.org/wiki/Hank_Hill"},
+      {name:"Han Solo", img:"./characters/hansolo.png", wiki:"https://en.wikipedia.org/wiki/Han_Solo"},
+      {name:"Harambe", img:"./characters/harambe.png", wiki:"https://en.wikipedia.org/wiki/Harambe"},
+      {name:"Harry Potter", img:"./characters/harrypotter.png", wiki:"https://en.wikipedia.org/wiki/Harry_Potter"},
+      {name:"Harry Styles", img:"./characters/harrystyles.png", wiki:"https://en.wikipedia.org/wiki/Harry_Styles"},
+      {name:"Hasan Piker", img:"./characters/hasanpiker.png", wiki:"https://en.wikipedia.org/wiki/Hasan_Piker"},
+      {name:"Heavy Weapons Guy", img:"./characters/heavy.png", wiki:"https://en.wikipedia.org/wiki/Heavy_(Team_Fortress_2)"},
+      {name:"Hercules", img:"./characters/hercules.png", wiki:"https://en.wikipedia.org/wiki/Hercules_(1997_film)"},
+      {name:"Homer Simpson", img:"./characters/homersimpson.png", wiki:"https://en.wikipedia.org/wiki/Homer_Simpson"},
+      {name:"Ice King", img:"./characters/iceking.png", wiki:"https://en.wikipedia.org/wiki/Ice_King"},
+      {name:"Indiana Jones", img:"./characters/indianajones.png", wiki:"https://en.wikipedia.org/wiki/Indiana_Jones"},
+      {name:"Iroh", img:"./characters/iroh.png", wiki:"https://en.wikipedia.org/wiki/Iroh"},
+      {name:"Iron Man", img:"./characters/Ironman.png", wiki:"https://en.wikipedia.org/wiki/Iron_Man"},
+      {name:"Isaac Newton", img:"./characters/isaacnewton.png", wiki:"https://en.wikipedia.org/wiki/Isaac_Newton"},
+      {name:"Jack Box", img:"./characters/jackbox.png", wiki:"https://en.wikipedia.org/wiki/Jack_in_the_Box"},
+      {name:"Jack Sparrow", img:"./characters/jacksparrow.png", wiki:"https://en.wikipedia.org/wiki/Jack_Sparrow"},
+      {name:"Jake the Dog", img:"./characters/jakethedog.png", wiki:"https://en.wikipedia.org/wiki/Jake_the_Dog"},
+      {name:"James Bond", img:"./characters/jamesbond.png", wiki:"https://en.wikipedia.org/wiki/James_Bond"},
+      {name:"Jason Voorhees", img:"./characters/jasonvoorhees.png", wiki:"https://en.wikipedia.org/wiki/Jason_Voorhees"},
+      {name:"Jay-Z", img:"./characters/jayz.png", wiki:"https://en.wikipedia.org/wiki/Jay-Z"},
+      {name:"Jeffrey Epstein", img:"./characters/jeffreyepstein.png", wiki:"https://en.wikipedia.org/wiki/Jeffrey_Epstein"},
+      {name:"Jimi Hendrix", img:"./characters/jimihendrix.png", wiki:"https://en.wikipedia.org/wiki/Jimi_Hendrix"},
+      {name:"Jimmy Neutron", img:"./characters/jimmyneutron.png", wiki:"https://en.wikipedia.org/wiki/Jimmy_Neutron"},
+      {name:"Joe Biden", img:"./characters/joebiden.png", wiki:"https://en.wikipedia.org/wiki/Joe_Biden"},
+      {name:"Joe Rogan", img:"./characters/joerogan.png", wiki:"https://en.wikipedia.org/wiki/Joe_Rogan"},
+      {name:"Joe Swanson", img:"./characters/joeswanson.png", wiki:"https://en.wikipedia.org/wiki/Joe_Swanson"},
+      {name:"John McClane", img:"./characters/johnmcclane.png", wiki:"https://en.wikipedia.org/wiki/John_McClane"},
+      {name:"Johnny Cash", img:"./characters/johnnycash.png", wiki:"https://en.wikipedia.org/wiki/Johnny_Cash"},
+      {name:"Justin Timberlake", img:"./characters/justintimberlake.png", wiki:"https://en.wikipedia.org/wiki/Justin_Timberlake"},
+      {name:"Kai Cenat", img:"./characters/kaicenat.png", wiki:"https://en.wikipedia.org/wiki/Kai_Cenat"},
+      {name:"Kakashi Hatake", img:"./characters/kakashihatake.png", wiki:"https://en.wikipedia.org/wiki/Kakashi_Hatake"},
+      {name:"Kamala Harris", img:"./characters/kamalaharris.png", wiki:"https://en.wikipedia.org/wiki/Kamala_Harris"},
+      {name:"Kanye West", img:"./characters/kanyewest.png", wiki:"https://en.wikipedia.org/wiki/Kanye_West"},
+      {name:"Katara", img:"./characters/katara.png", wiki:"https://en.wikipedia.org/wiki/Katara"},
+      {name:"Katniss Everdeen", img:"./characters/katnisseverdeen.png", wiki:"https://en.wikipedia.org/wiki/Katniss_Everdeen"},
+      {name:"Katy Perry", img:"./characters/katyperry.png", wiki:"https://en.wikipedia.org/wiki/Katy_Perry"},
+      {name:"Keanu Reeves", img:"./characters/keanureeves.png", wiki:"https://en.wikipedia.org/wiki/Keanu_Reeves"},
+      {name:"Kendrick Lamar", img:"./characters/kendricklamar.png", wiki:"https://en.wikipedia.org/wiki/Kendrick_Lamar"},
+      {name:"Ken Masters", img:"./characters/kenmasters.png", wiki:"https://en.wikipedia.org/wiki/Ken_Masters"},
+      {name:"Kenny McCormick", img:"./characters/kennymccormick.png", wiki:"https://en.wikipedia.org/wiki/Kenny_McCormick"},
+      {name:"Kirby", img:"./characters/kirby.png", wiki:"https://en.wikipedia.org/wiki/Kirby"},
+      {name:"Knuckles", img:"./characters/knuckles.png", wiki:"https://en.wikipedia.org/wiki/Knuckles_the_Echidna"},
+      {name:"Kool-Aid Man", img:"./characters/koolaidman.png", wiki:"https://en.wikipedia.org/wiki/Kool-Aid_Man"},
+      {name:"Kratos", img:"./characters/kratos.png", wiki:"https://en.wikipedia.org/wiki/Kratos"},
+      {name:"Kronk", img:"./characters/kronk.png", wiki:"https://en.wikipedia.org/wiki/Kronk"},
+      {name:"Kurt Cobain", img:"./characters/kurtcobain.png", wiki:"https://en.wikipedia.org/wiki/Kurt_Cobain"},
+      {name:"Kuzco", img:"./characters/kuzco.png", wiki:"https://en.wikipedia.org/wiki/Kuzco"},
+      {name:"Kyle Broflovski", img:"./characters/kylebroflovski.png", wiki:"https://en.wikipedia.org/wiki/Kyle_Broflovski"},
+      {name:"L", img:"./characters/L.png", wiki:"https://en.wikipedia.org/wiki/L_(Death_Note)"},
+      {name:"Lady Gaga", img:"./characters/ladygaga.png", wiki:"https://en.wikipedia.org/wiki/Lady_Gaga"},
+      {name:"Lara Croft", img:"./characters/laracroft.png", wiki:"https://en.wikipedia.org/wiki/Lara_Croft"},
+      {name:"LeBron James", img:"./characters/lebronjames.png", wiki:"https://en.wikipedia.org/wiki/LeBron_James"},
+      {name:"Led Zeppelin", img:"./characters/ledzeppelin.png", wiki:"https://en.wikipedia.org/wiki/Led_Zeppelin"},
+      {name:"Legolas", img:"./characters/legolas.png", wiki:"https://en.wikipedia.org/wiki/Legolas"},
+      {name:"Leonardo da Vinci", img:"./characters/leonardodavinci.png", wiki:"https://en.wikipedia.org/wiki/Leonardo_da_Vinci"},
+      {name:"Leonardo DiCaprio", img:"./characters/leonardodicaprio.png", wiki:"https://en.wikipedia.org/wiki/Leonardo_DiCaprio"},
+      {name:"Lightning McQueen", img:"./characters/lightningmcqueen.png", wiki:"https://en.wikipedia.org/wiki/Lightning_McQueen"},
+      {name:"Light Yagami", img:"./characters/lightyagami.png", wiki:"https://en.wikipedia.org/wiki/Light_Yagami"},
+      {name:"Link", img:"./characters/link.png", wiki:"https://en.wikipedia.org/wiki/Link_(The_Legend_of_Zelda)"},
+      {name:"Lisa Simpson", img:"./characters/lisasimpson.png", wiki:"https://en.wikipedia.org/wiki/Lisa_Simpson"},
+      {name:"Lois Griffin", img:"./characters/loisgriffin.png", wiki:"https://en.wikipedia.org/wiki/Lois_Griffin"},
+      {name:"Lucky the Leprechaun", img:"./characters/luckytheleprechaun.png", wiki:"https://en.wikipedia.org/wiki/Lucky_Charms"},
+      {name:"Monkey D. Luffy", img:"./characters/luffy.png", wiki:"https://en.wikipedia.org/wiki/Monkey_D._Luffy"},
+      {name:"Luigi", img:"./characters/luigi.png", wiki:"https://en.wikipedia.org/wiki/Luigi"},
+      {name:"Lynyrd Skynyrd", img:"./characters/lynyrdskynyrd.png", wiki:"https://en.wikipedia.org/wiki/Lynyrd_Skynyrd"},
+      {name:"Mad Max", img:"./characters/madmax.png", wiki:"https://en.wikipedia.org/wiki/Mad_Max_(character)"},
+      {name:"Marceline", img:"./characters/marceline.png", wiki:"https://en.wikipedia.org/wiki/Marceline_the_Vampire_Queen"},
+      {name:"Marge Simpson", img:"./characters/margesimpson.png", wiki:"https://en.wikipedia.org/wiki/Marge_Simpson"},
+      {name:"Marilyn Monroe", img:"./characters/marilynmonroe.png", wiki:"https://en.wikipedia.org/wiki/Marilyn_Monroe"},
+      {name:"Mario", img:"./characters/Mario.png", wiki:"https://en.wikipedia.org/wiki/Mario"},
+      {name:"Master Chief", img:"./characters/masterchief.png", wiki:"https://en.wikipedia.org/wiki/Master_Chief"},
+      {name:"Mater", img:"./characters/mater.png", wiki:"https://en.wikipedia.org/wiki/Mater_(Cars)"},
+      {name:"Maui", img:"./characters/maui.png", wiki:"https://en.wikipedia.org/wiki/Maui_(Moana)"},
+      {name:"Mega Man", img:"./characters/megaman.png", wiki:"https://en.wikipedia.org/wiki/Mega_Man"},
+      {name:"Metallica", img:"./characters/metallica.png", wiki:"https://en.wikipedia.org/wiki/Metallica"},
+      {name:"Mewtwo", img:"./characters/mewtwo.png", wiki:"https://en.wikipedia.org/wiki/Mewtwo"},
+      {name:"Michael Jackson", img:"./characters/michaeljackson.png", wiki:"https://en.wikipedia.org/wiki/Michael_Jackson"},
+      {name:"Michael Jordan", img:"./characters/michaeljordan.png", wiki:"https://en.wikipedia.org/wiki/Michael_Jordan"},
+      {name:"Michael Myers", img:"./characters/michaelmyers.png", wiki:"https://en.wikipedia.org/wiki/Michael_Myers_(Halloween)"},
+      {name:"Mickey Mouse", img:"./characters/mickeymouse.png", wiki:"https://en.wikipedia.org/wiki/Mickey_Mouse"},
+      {name:"Mike Wazowski", img:"./characters/mikewazowski.png", wiki:"https://en.wikipedia.org/wiki/Mike_Wazowski"},
+      {name:"Miley Cyrus", img:"./characters/mileycyrus.png", wiki:"https://en.wikipedia.org/wiki/Miley_Cyrus"},
+      {name:"Minions", img:"./characters/minions.png", wiki:"https://en.wikipedia.org/wiki/Minions_(Despicable_Me)"},
+      {name:"Minnie Mouse", img:"./characters/minniemouse.png", wiki:"https://en.wikipedia.org/wiki/Minnie_Mouse"},
+      {name:"Martin Luther King Jr.", img:"./characters/mlk.png", wiki:"https://en.wikipedia.org/wiki/Martin_Luther_King_Jr."},
+      {name:"M&M's Green", img:"./characters/mmsgreen.png", wiki:"https://en.wikipedia.org/wiki/M%26M%27s"},
+      {name:"Moana", img:"./characters/moana.png", wiki:"https://en.wikipedia.org/wiki/Moana_(2016_film)"},
+      {name:"Mordecai", img:"./characters/mordecai.png", wiki:"https://en.wikipedia.org/wiki/Mordecai_(Regular_Show)"},
+      {name:"Morgan Freeman", img:"./characters/morganfreeman.png", wiki:"https://en.wikipedia.org/wiki/Morgan_Freeman"},
+      {name:"Morty Smith", img:"./characters/mortysmith.png", wiki:"https://en.wikipedia.org/wiki/Morty_Smith"},
+      {name:"MrBeast", img:"./characters/mrbeast.png", wiki:"https://en.wikipedia.org/wiki/MrBeast"},
+      {name:"Mr. Burns", img:"./characters/mrburns.png", wiki:"https://en.wikipedia.org/wiki/Mr._Burns"},
+      {name:"Mr. Krabs", img:"./characters/mrkrabs.png", wiki:"https://en.wikipedia.org/wiki/Mr._Krabs"},
+      {name:"Muhammad Ali", img:"./characters/muhammadali.png", wiki:"https://en.wikipedia.org/wiki/Muhammad_Ali"},
+      {name:"Mulan", img:"./characters/mulan.png", wiki:"https://en.wikipedia.org/wiki/Mulan"},
+      {name:"Muscle Man", img:"./characters/muscleman.png", wiki:"https://en.wikipedia.org/wiki/Muscle_Man"},
+      {name:"Mushu", img:"./characters/mushu.png", wiki:"https://en.wikipedia.org/wiki/Mushu"},
+      {name:"My Chemical Romance", img:"./characters/mychemicalromance.png", wiki:"https://en.wikipedia.org/wiki/My_Chemical_Romance"},
+      {name:"Nami", img:"./characters/nami.png", wiki:"https://en.wikipedia.org/wiki/Nami_(One_Piece)"},
+      {name:"Naruto Uzumaki", img:"./characters/narutouzumaki.png", wiki:"https://en.wikipedia.org/wiki/Naruto_Uzumaki"},
+      {name:"Nelson Mandela", img:"./characters/nelsonmandela.png", wiki:"https://en.wikipedia.org/wiki/Nelson_Mandela"},
+      {name:"Nemo", img:"./characters/nemo.png", wiki:"https://en.wikipedia.org/wiki/Nemo_(Finding_Nemo)"},
+      {name:"Neo", img:"./characters/neo.png", wiki:"https://en.wikipedia.org/wiki/Neo_(The_Matrix)"},
+      {name:"Nick Fuentes", img:"./characters/nickfuentes.png", wiki:"https://en.wikipedia.org/wiki/Nick_Fuentes"},
+      {name:"Nikola Tesla", img:"./characters/nikolatesla.png", wiki:"https://en.wikipedia.org/wiki/Nikola_Tesla"},
+      {name:"The Notorious B.I.G.", img:"./characters/notoriousbig.png", wiki:"https://en.wikipedia.org/wiki/The_Notorious_B.I.G."},
+      {name:"N.W.A", img:"./characters/nwa.png", wiki:"https://en.wikipedia.org/wiki/N.W.A"},
+      {name:"Nyan Cat", img:"./characters/nyancat.png", wiki:"https://en.wikipedia.org/wiki/Nyan_Cat"},
+      {name:"Oprah Winfrey", img:"./characters/oprah.png", wiki:"https://en.wikipedia.org/wiki/Oprah_Winfrey"},
+      {name:"Pacha", img:"./characters/pacha.png", wiki:"https://en.wikipedia.org/wiki/Pacha_(The_Emperor%27s_New_Groove)"},
+      {name:"Pac-Man", img:"./characters/pacman.png", wiki:"https://en.wikipedia.org/wiki/Pac-Man"},
+      {name:"Paramore", img:"./characters/paramore.png", wiki:"https://en.wikipedia.org/wiki/Paramore"},
+      {name:"Patrick Bateman", img:"./characters/patrickbateman.png", wiki:"https://en.wikipedia.org/wiki/Patrick_Bateman"},
+      {name:"Patrick Star", img:"./characters/patrickstar.png", wiki:"https://en.wikipedia.org/wiki/Patrick_Star"},
+      {name:"Pepe the Frog", img:"./characters/pepethefrog.png", wiki:"https://en.wikipedia.org/wiki/Pepe_the_Frog"},
+      {name:"Perry the Platypus", img:"./characters/perrytheplatypus.png", wiki:"https://en.wikipedia.org/wiki/Perry_the_Platypus"},
+      {name:"Peter Griffin", img:"./characters/petergiffin.png", wiki:"https://en.wikipedia.org/wiki/Peter_Griffin"},
+      {name:"PewDiePie", img:"./characters/pewdiepie.png", wiki:"https://en.wikipedia.org/wiki/PewDiePie"},
+      {name:"Phineas Flynn", img:"./characters/phineasflynn.png", wiki:"https://en.wikipedia.org/wiki/Phineas_Flynn"},
+      {name:"Piccolo", img:"./characters/piccolo.png", wiki:"https://en.wikipedia.org/wiki/Piccolo"},
+      {name:"Pikachu", img:"./characters/Pikachu.png", wiki:"https://en.wikipedia.org/wiki/Pikachu"},
+      {name:"Pink Floyd", img:"./characters/pinkfloyd.png", wiki:"https://en.wikipedia.org/wiki/Pink_Floyd"},
+      {name:"Plankton", img:"./characters/plankton.png", wiki:"https://en.wikipedia.org/wiki/Plankton_(SpongeBob_SquarePants)"},
+      {name:"Post Malone", img:"./characters/postmalone.png", wiki:"https://en.wikipedia.org/wiki/Post_Malone"},
+      {name:"Princess Bubblegum", img:"./characters/princessbubblegum.png", wiki:"https://en.wikipedia.org/wiki/Princess_Bubblegum"},
+      {name:"Princess Leia", img:"./characters/princessleia.png", wiki:"https://en.wikipedia.org/wiki/Princess_Leia"},
+      {name:"Princess Peach", img:"./characters/princesspeach.png", wiki:"https://en.wikipedia.org/wiki/Princess_Peach"},
+      {name:"Glenn Quagmire", img:"./characters/quagmire.png", wiki:"https://en.wikipedia.org/wiki/Glenn_Quagmire"},
+      {name:"Rambo", img:"./characters/rambo.png", wiki:"https://en.wikipedia.org/wiki/John_Rambo"},
+      {name:"Randy Marsh", img:"./characters/randymarsh.png", wiki:"https://en.wikipedia.org/wiki/Randy_Marsh"},
+      {name:"Red Hot Chili Peppers", img:"./characters/redhotchilipeppers.png", wiki:"https://en.wikipedia.org/wiki/Red_Hot_Chili_Peppers"},
+      {name:"Rick Sanchez", img:"./characters/ricksanchez.png", wiki:"https://en.wikipedia.org/wiki/Rick_Sanchez"},
+      {name:"Rigby", img:"./characters/rigby.png", wiki:"https://en.wikipedia.org/wiki/Rigby_(Regular_Show)"},
+      {name:"Rihanna", img:"./characters/rihanna.png", wiki:"https://en.wikipedia.org/wiki/Rihanna"},
+      {name:"Robert Downey Jr.", img:"./characters/robertdowneyjr.png", wiki:"https://en.wikipedia.org/wiki/Robert_Downey_Jr."},
+      {name:"Rocky Balboa", img:"./characters/rockybalboa.png", wiki:"https://en.wikipedia.org/wiki/Rocky_Balboa"},
+      {name:"Roger the Alien", img:"./characters/rogerthealien.png", wiki:"https://en.wikipedia.org/wiki/Roger_(American_Dad!)"},
+      {name:"Ronald McDonald", img:"./characters/ronaldmcdonald.png", wiki:"https://en.wikipedia.org/wiki/Ronald_McDonald"},
+      {name:"Rosa Parks", img:"./characters/rosaparks.png", wiki:"https://en.wikipedia.org/wiki/Rosa_Parks"},
+      {name:"Russell", img:"./characters/russell.png", wiki:"https://en.wikipedia.org/wiki/Russell_(Up)"},
+      {name:"Ryan Reynolds", img:"./characters/ryanreynolds.png", wiki:"https://en.wikipedia.org/wiki/Ryan_Reynolds"},
+      {name:"Ryu", img:"./characters/ryu.png", wiki:"https://en.wikipedia.org/wiki/Ryu_(Street_Fighter)"},
+      {name:"Sailor Moon", img:"./characters/sailormoon.png", wiki:"https://en.wikipedia.org/wiki/Sailor_Moon"},
+      {name:"Samuel L. Jackson", img:"./characters/samuelljackson.png", wiki:"https://en.wikipedia.org/wiki/Samuel_L._Jackson"},
+      {name:"Samurai Jack", img:"./characters/samuraijack.png", wiki:"https://en.wikipedia.org/wiki/Samurai_Jack"},
+      {name:"Samus Aran", img:"./characters/samusaran.png", wiki:"https://en.wikipedia.org/wiki/Samus"},
+      {name:"Sandy Cheeks", img:"./characters/sandycheeks.png", wiki:"https://en.wikipedia.org/wiki/Sandy_Cheeks"},
+      {name:"Sasuke Uchiha", img:"./characters/sasukeuchiha.png", wiki:"https://en.wikipedia.org/wiki/Sasuke_Uchiha"},
+      {name:"Scarlett Johansson", img:"./characters/scarlettjohansson.png", wiki:"https://en.wikipedia.org/wiki/Scarlett_Johansson"},
+      {name:"Sephiroth", img:"./characters/sephiroth.png", wiki:"https://en.wikipedia.org/wiki/Sephiroth"},
+      {name:"Shrek", img:"./characters/shrek.png", wiki:"https://en.wikipedia.org/wiki/Shrek_(character)"},
+      {name:"Simba", img:"./characters/simba.png", wiki:"https://en.wikipedia.org/wiki/Simba"},
+      {name:"Slash", img:"./characters/slash.png", wiki:"https://en.wikipedia.org/wiki/Slash_(musician)"},
+      {name:"Snoop Dogg", img:"./characters/snoopdogg.png", wiki:"https://en.wikipedia.org/wiki/Snoop_Dogg"},
+      {name:"Snow White", img:"./characters/snowwhite.png", wiki:"https://en.wikipedia.org/wiki/Snow_White"},
+      {name:"Sokka", img:"./characters/sokka.png", wiki:"https://en.wikipedia.org/wiki/Sokka"},
+      {name:"Solid Snake", img:"./characters/solidsnake.png", wiki:"https://en.wikipedia.org/wiki/Solid_Snake"},
+      {name:"Sonic the Hedgehog", img:"./characters/Sonic.png", wiki:"https://en.wikipedia.org/wiki/Sonic_the_Hedgehog"},
+      {name:"Spike Spiegel", img:"./characters/spikespiegel.png", wiki:"https://en.wikipedia.org/wiki/Spike_Spiegel"},
+      {name:"SpongeBob SquarePants", img:"./characters/Spongebob.png", wiki:"https://en.wikipedia.org/wiki/SpongeBob_SquarePants"},
+      {name:"Spyro the Dragon", img:"./characters/spyrothedragon.png", wiki:"https://en.wikipedia.org/wiki/Spyro_the_Dragon"},
+      {name:"Squidward Tentacles", img:"./characters/squidward.png", wiki:"https://en.wikipedia.org/wiki/Squidward_Tentacles"},
+      {name:"Stan Marsh", img:"./characters/stanmarsh.png", wiki:"https://en.wikipedia.org/wiki/Stan_Marsh"},
+      {name:"Stan Smith", img:"./characters/stansmith.png", wiki:"https://en.wikipedia.org/wiki/Stan_Smith"},
+      {name:"Stephen Hawking", img:"./characters/stephenhawking.png", wiki:"https://en.wikipedia.org/wiki/Stephen_Hawking"},
+      {name:"Steve (Minecraft)", img:"./characters/steve.png", wiki:"https://en.wikipedia.org/wiki/Steve_(Minecraft)"},
+      {name:"Steve Jobs", img:"./characters/stevejobs.png", wiki:"https://en.wikipedia.org/wiki/Steve_Jobs"},
+      {name:"Stewie Griffin", img:"./characters/stewiegriffin.png", wiki:"https://en.wikipedia.org/wiki/Stewie_Griffin"},
+      {name:"James P. Sullivan (Sulley)", img:"./characters/sulley.png", wiki:"https://en.wikipedia.org/wiki/James_P._Sullivan"},
+      {name:"Superman", img:"./characters/superman.png", wiki:"https://en.wikipedia.org/wiki/Superman"},
+      {name:"Tails", img:"./characters/tails.png", wiki:"https://en.wikipedia.org/wiki/Miles_%22Tails%22_Prower"},
+      {name:"Taylor Swift", img:"./characters/taylorswift.png", wiki:"https://en.wikipedia.org/wiki/Taylor_Swift"},
+      {name:"The Terminator", img:"./characters/terminator.png", wiki:"https://en.wikipedia.org/wiki/Terminator_(character)"},
+      {name:"The Beatles", img:"./characters/thebeatles.png", wiki:"https://en.wikipedia.org/wiki/The_Beatles"},
+      {name:"The Dude", img:"./characters/thedude.png", wiki:"https://en.wikipedia.org/wiki/The_Dude"},
+      {name:"The Joker", img:"./characters/thejoker.png", wiki:"https://en.wikipedia.org/wiki/Joker_(character)"},
+      {name:"Dwayne Johnson", img:"./characters/therock.png", wiki:"https://en.wikipedia.org/wiki/Dwayne_Johnson"},
+      {name:"The Weeknd", img:"./characters/theweeknd.png", wiki:"https://en.wikipedia.org/wiki/The_Weeknd"},
+      {name:"Thomas Edison", img:"./characters/thomasedison.png", wiki:"https://en.wikipedia.org/wiki/Thomas_Edison"},
+      {name:"Tifa Lockhart", img:"./characters/tifalockhart.png", wiki:"https://en.wikipedia.org/wiki/Tifa_Lockhart"},
+      {name:"Timmy Turner", img:"./characters/timmyturner.png", wiki:"https://en.wikipedia.org/wiki/Timmy_Turner"},
+      {name:"Timothée Chalamet", img:"./characters/timotheechalamet.png", wiki:"https://en.wikipedia.org/wiki/Timoth%C3%A9e_Chalamet"},
+      {name:"Tom Cruise", img:"./characters/tomcruise.png", wiki:"https://en.wikipedia.org/wiki/Tom_Cruise"},
+      {name:"Tom Hanks", img:"./characters/tomhanks.png", wiki:"https://en.wikipedia.org/wiki/Tom_Hanks"},
+      {name:"Tony Montana", img:"./characters/tonymontana.png", wiki:"https://en.wikipedia.org/wiki/Tony_Montana"},
+      {name:"Tony the Tiger", img:"./characters/tonythetiger.png", wiki:"https://en.wikipedia.org/wiki/Tony_the_Tiger"},
+      {name:"Toucan Sam", img:"./characters/toucansam.png", wiki:"https://en.wikipedia.org/wiki/Toucan_Sam"},
+      {name:"Trollface", img:"./characters/trollface.png", wiki:"https://en.wikipedia.org/wiki/Trollface"},
+      {name:"Donald Trump", img:"./characters/trump.png", wiki:"https://en.wikipedia.org/wiki/Donald_Trump"},
+      {name:"Tucker Carlson", img:"./characters/tuckercarlson.png", wiki:"https://en.wikipedia.org/wiki/Tucker_Carlson"},
+      {name:"Tupac Shakur", img:"./characters/tupacshakur.png", wiki:"https://en.wikipedia.org/wiki/Tupac_Shakur"},
+      {name:"Ugandan Knuckles", img:"./characters/ugandanknuckles.png", wiki:"https://en.wikipedia.org/wiki/Ugandan_Knuckles"},
+      {name:"Vegeta", img:"./characters/vegeta.png", wiki:"https://en.wikipedia.org/wiki/Vegeta"},
+      {name:"Vincent van Gogh", img:"./characters/vincentvangogh.png", wiki:"https://en.wikipedia.org/wiki/Vincent_van_Gogh"},
+      {name:"Vito Corleone", img:"./characters/vitocorleone.png", wiki:"https://en.wikipedia.org/wiki/Vito_Corleone"},
+      {name:"WALL-E", img:"./characters/walle.png", wiki:"https://en.wikipedia.org/wiki/WALL-E"},
+      {name:"Walt Disney", img:"./characters/waltdisney.png", wiki:"https://en.wikipedia.org/wiki/Walt_Disney"},
+      {name:"Wendy", img:"./characters/wendy.png", wiki:"https://en.wikipedia.org/wiki/Wendy%27s"},
+      {name:"Wojak", img:"./characters/wojak.png", wiki:"https://en.wikipedia.org/wiki/Wojak"},
+      {name:"Wonder Woman", img:"./characters/WonderWoman.png", wiki:"https://en.wikipedia.org/wiki/Wonder_Woman"},
+      {name:"Woody", img:"./characters/woody.png", wiki:"https://en.wikipedia.org/wiki/Woody_(Toy_Story)"},
+      {name:"Wu-Tang Clan", img:"./characters/wutangclan.png", wiki:"https://en.wikipedia.org/wiki/Wu-Tang_Clan"},
+      {name:"xQc", img:"./characters/xqc.png", wiki:"https://en.wikipedia.org/wiki/xQc"},
+      {name:"Yoda", img:"./characters/yoda.png", wiki:"https://en.wikipedia.org/wiki/Yoda"},
+      {name:"Yoshi", img:"./characters/yoshi.png", wiki:"https://en.wikipedia.org/wiki/Yoshi"},
+      {name:"Yugi Muto", img:"./characters/yugi.png", wiki:"https://en.wikipedia.org/wiki/Yugi_Muto"},
+      {name:"Princess Zelda", img:"./characters/zelda.png", wiki:"https://en.wikipedia.org/wiki/Princess_Zelda"},
+      {name:"Zendaya", img:"./characters/zendaya.png", wiki:"https://en.wikipedia.org/wiki/Zendaya"},
+      {name:"Zuko", img:"./characters/zuko.png", wiki:"https://en.wikipedia.org/wiki/Zuko"}
     ];
 
     function initFirebase() { app = firebase.initializeApp(firebaseConfig); db = firebase.database(); }
@@ -70,7 +379,7 @@
         <h2>READY TO GO REMOTE?</h2>
         <button onclick="createRoom()">CREATE ROOM (Host)</button>
         <button onclick="showJoinScreen()">JOIN ROOM (Friend)</button>
-        <p style="margin-top:40px;color:#00ffff;">V9 • Wiki links + "I don't know" button added!</p>
+        <p class="flavor-text">V1.21 — We had to rewrite this game so many times the code started developing trust issues 😂</p>
       `;
     }
 
@@ -90,6 +399,7 @@
         <input id="codeInput" placeholder="e.g. X7K9P2" maxlength="6" style="text-transform:uppercase">
         <button onclick="joinRoom()">JOIN &amp; BATTLE</button>
         <button onclick="showHome()">← BACK</button>
+        <p class="flavor-text">V1.21 — We had to rewrite this game so many times the code started developing trust issues 😂</p>
       `;
     }
 
@@ -150,6 +460,7 @@
         <button onclick="dontKnow()">I DON'T KNOW WHO THE HELL THIS IS</button>
         <button onclick="skipTurn()">Skip Turn (wrong guess)</button>
         <div class="log" id="log"></div>
+        <p class="flavor-text">V1.21 — We had to rewrite this game so many times the code started developing trust issues 😂</p>
       `;
       updateOpponentImage();
     }
@@ -161,7 +472,11 @@
     }
 
     function openWiki() {
-      if (opponentChar && opponentChar.wiki) window.open(opponentChar.wiki, '_blank');
+      if (opponentChar && opponentChar.wiki) {
+        window.open(opponentChar.wiki, '_blank');
+      } else {
+        alert("No wiki link for this character yet!");
+      }
     }
 
     function makeGuess() {
@@ -176,6 +491,7 @@
             <img src="${myChar.img}" alt="${myChar.name}">
           </div>
           <button onclick="newRound()">NEW ROUND IN SAME ROOM</button>
+          <p class="flavor-text">V1.21 — We had to rewrite this game so many times the code started developing trust issues 😂</p>
         `;
       } else {
         const log = document.getElementById("log");
@@ -207,6 +523,7 @@
         <p>Share this code with your friend on Discord!</p>
         <div style="margin:40px 0;font-size:1.4rem;color:#00ffff;">Waiting for opponent to join...</div>
         <button onclick="showHome()">CANCEL &amp; BACK</button>
+        <p class="flavor-text">V1.21 — We had to rewrite this game so many times the code started developing trust issues 😂</p>
       `;
     }
 
