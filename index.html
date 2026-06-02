@@ -79,7 +79,7 @@
     ];
 
     function getProxiedImg(url) {
-      return `https://proxy.duckduckgo.com/iu/?u=` + encodeURIComponent(url);
+      return `https://images.weserv.nl/?url=` + encodeURIComponent(url);
     }
 
     function initFirebase() { app = firebase.initializeApp(firebaseConfig); db = firebase.database(); }
@@ -93,7 +93,7 @@
         <h2>READY TO GO REMOTE?</h2>
         <button onclick="createRoom()">CREATE ROOM (Host)</button>
         <button onclick="showJoinScreen()">JOIN ROOM (Friend)</button>
-        <p style="margin-top:40px;color:#00ffff;">V7 • DuckDuckGo proxy = REAL PICTURES EVERY TIME on GitHub!</p>
+        <p style="margin-top:40px;color:#00ffff;">V7 • Using weserv.nl proxy (exactly what was suggested)!</p>
       `;
     }
 
