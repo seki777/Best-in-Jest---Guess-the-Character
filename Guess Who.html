@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE BEST IN JEST • ONLINE V6</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    body { margin:0; padding:0; background:linear-gradient(45deg,#0f0f0f,#1a0033); color:#fff; font-family:'Press Start 2P',system-ui; text-align:center; overflow:hidden; }
+    .header { background:#ff00ff; color:#000; padding:20px; font-size:2.4rem; text-shadow:4px 4px 0 #00ffff; }
+    .container { max-width:1100px; margin:0 auto; padding:20px; }
+    .forehead-row { display:flex; justify-content:center; gap:40px; margin:30px 0; flex-wrap:wrap; }
+    .character-display { width:320px; height:320px; border:12px solid #00ffff; border-radius:30px; box-shadow:0 0 50px #ff00ff; overflow:hidden; position:relative; background:#000; }
+    .character-display img { width:100%; height:100%; object-fit:contain; transition:opacity 0.3s; }
+    .hidden-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; align-items:center; justify-content:center; flex-direction:column; color:#ff00ff; font-size:2.8rem; text-shadow:0 0 30px #ffff00; }
+    .fallback-name { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:2.2rem; color:#ffff00; text-shadow:0 0 20px #ff00ff; background:rgba(0,0,0,0.85); }
+    .loading { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.8); color:#00ffff; font-size:1.4rem; }
+    button { background:#ff00ff; color:#000; font-family:'Press Start 2P'; padding:18px 40px; font-size:1.3rem; margin:15px; border:none; border-radius:15px; box-shadow:8px 8px 0 #00ffff; cursor:pointer; }
+    button:hover { background:#00ffff; color:#ff00ff; transform:scale(1.1); }
+    input { padding:18px; width:70%; font-size:1.3rem; margin:15px 0; border-radius:10px; }
+    .log { background:#000; color:#0f0; padding:20px; margin:25px auto; max-width:800px; height:200px; overflow-y:auto; border:5px solid #00ffff; text-align:left; font-size:1rem; }
+    .status { font-size:1.5rem; margin:20px 0; }
+    .winner { animation:flash 0.5s infinite; font-size:4rem; color:#ffff00; text-shadow:0 0 30px #ff00ff; }
+    @keyframes flash { 50% { color:#ff00ff; } }
+    .label { font-size:1.1rem; margin-bottom:8px; color:#00ffff; }
+  </style>
+</head>
+<body>
+  <div class="header">THE BEST IN JEST • ONLINE V6</div>
+  <div class="container" id="app"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBBmDbqgjI8PvUzvBCmRKM_eNnkdLzEcVa",
+      authDomain: "guess-the-character-ccd79.firebaseapp.com",
+      databaseURL: "https://guess-the-character-ccd79-default-rtdb.firebaseio.com",
+      projectId: "guess-the-character-ccd79",
+      storageBucket: "guess-the-character-ccd79.firebasestorage.app",
+      messagingSenderId: "682517615536",
+      appId: "1:682517615536:web:ead0fa14cf9f1c696b6fc75",
+      measurementId: "G-ZNLVPHQDI2"
+    };
+
+    let app, db, roomRef, mySlot, myChar, opponentChar, currentRoomCode, currentTurn;
+
+    const characters = [
+      {name:"Pikachu",img:"https://upload.wikimedia.org/wikipedia/en/a/a6/Pok%C3%A9mon_Pikachu_artwork.png"},
+      {name:"Mario",img:"https://upload.wikimedia.org/wikipedia/en/a/a9/Mario_NSMBU.png"},
+      {name:"SpongeBob",img:"https://upload.wikimedia.org/wikipedia/en/3/3b/Spongebob-squarepants.png"},
+      {name:"Batman",img:"https://upload.wikimedia.org/wikipedia/en/7/7b/Batman_%28comic_book_character%29.jpg"},
+      {name:"Darth Vader",img:"https://upload.wikimedia.org/wikipedia/en/3/32/Darth_Vader_%28Star_Wars%29.jpg"},
+      {name:"Sonic",img:"https://upload.wikimedia.org/wikipedia/en/3/3b/Sonic_the_Hedgehog.png"},
+      {name:"Goku",img:"https://upload.wikimedia.org/wikipedia/en/5/5f/Goku_%28Dragon_Ball%29.png"},
+      {name:"Wonder Woman",img:"https://upload.wikimedia.org/wikipedia/en/9/93/Wonder_Woman_%28comic_book_character%29.jpg"},
+      {name:"Elsa",img:"https://upload.wikimedia.org/wikipedia/en/9/9e/Elsa_from_Disney%27s_Frozen.png"},
+      {name:"Luigi",img:"https://upload.wikimedia.org/wikipedia/en/9/99/Luigi_NSMBU.png"},
+      {name:"Princess Peach",img:"https://upload.wikimedia.org/wikipedia/en/a/a0/Peach_NSMBU.png"},
+      {name:"Bowser",img:"https://upload.wikimedia.org/wikipedia/en/4/4f/Bowser_NSMBU.png"},
+      {name:"Link",img:"https://upload.wikimedia.org/wikipedia/en/3/3f/Link_from_The_Legend_of_Zelda.png"},
+      {name:"Steve",img:"https://upload.wikimedia.org/wikipedia/en/5/56/Minecraft_Steve.png"},
+      {name:"Mickey Mouse",img:"https://upload.wikimedia.org/wikipedia/en/7/7d/Mickey_Mouse.png"},
+      {name:"Bugs Bunny",img:"https://upload.wikimedia.org/wikipedia/en/2/2d/Bugs_Bunny.png"},
+      {name:"Homer Simpson",img:"https://upload.wikimedia.org/wikipedia/en/0/0b/Homer_Simpson.png"},
+      {name:"Shrek",img:"https://upload.wikimedia.org/wikipedia/en/4/4f/Shrek_%28character%29.png"},
+      {name:"Iron Man",img:"https://upload.wikimedia.org/wikipedia/en/0/00/Iron_Man_%28Marvel_Cinematic_Universe%29.png"},
+      {name:"Naruto Uzumaki",img:"https://upload.wikimedia.org/wikipedia/en/9/94/NarutoUzumaki.png"},
+      {name:"Monkey D. Luffy",img:"https://upload.wikimedia.org/wikipedia/en/1/1a/Luffy.png"},
+      {name:"Thor",img:"https://upload.wikimedia.org/wikipedia/en/2/2a/Thor_%28Marvel_Comics%29.png"},
+      {name:"Yoda",img:"https://upload.wikimedia.org/wikipedia/en/9/9b/Star_Wars_Yoda.png"},
+      {name:"Deadpool",img:"https://upload.wikimedia.org/wikipedia/en/0/0f/Deadpool_%28character%29.png"},
+      {name:"Joker",img:"https://upload.wikimedia.org/wikipedia/en/3/3f/Joker_%28Heath_Ledger%29.png"},
+      {name:"Hulk",img:"https://upload.wikimedia.org/wikipedia/en/5/5f/Hulk_%28Marvel_Comics%29.png"},
+      {name:"Captain America",img:"https://upload.wikimedia.org/wikipedia/en/9/9f/Captain_America_%28comic_book_character%29.png"},
+      {name:"Black Panther",img:"https://upload.wikimedia.org/wikipedia/en/6/6f/Black_Panther_%28Marvel_Comics%29.png"},
+      {name:"Doraemon",img:"https://upload.wikimedia.org/wikipedia/en/4/4f/Doraemon.png"},
+      {name:"Ash Ketchum",img:"https://upload.wikimedia.org/wikipedia/en/7/7e/Ash_Ketchum.png"}
+    ];
+
+    function getProxiedImg(url) {
+      return `https://corsproxy.io/?` + encodeURIComponent(url);
+    }
+
+    function initFirebase() { app = firebase.initializeApp(firebaseConfig); db = firebase.database(); }
+    function generateRoomCode() {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let code = ""; for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)]; return code;
+    }
+
+    function showHome() {
+      document.getElementById("app").innerHTML = `
+        <h2>READY TO GO REMOTE?</h2>
+        <button onclick="createRoom()">CREATE ROOM (Host)</button>
+        <button onclick="showJoinScreen()">JOIN ROOM (Friend)</button>
+        <p style="margin-top:40px;color:#00ffff;">V6 • New CORS proxy = pictures load 100% on Netlify!</p>
+      `;
+    }
+
+    async function createRoom() {
+      initFirebase();
+      currentRoomCode = generateRoomCode();
+      roomRef = db.ref('rooms/' + currentRoomCode);
+      mySlot = 1;
+      roomRef.set({ players: {1:{slot:1,connected:true},2:{slot:2,connected:false}}, turn:1, char1:characters[Math.floor(Math.random()*characters.length)], char2:characters[Math.floor(Math.random()*characters.length)], guesses:[] });
+      roomRef.on('value', snapshot => handleRoomUpdate(snapshot.val()));
+      showWaitingScreen();
+    }
+
+    function showJoinScreen() {
+      document.getElementById("app").innerHTML = `
+        <h2>ENTER ROOM CODE</h2>
+        <input id="codeInput" placeholder="e.g. X7K9P2" maxlength="6" style="text-transform:uppercase">
+        <button onclick="joinRoom()">JOIN &amp; BATTLE</button>
+        <button onclick="showHome()">← BACK</button>
+      `;
+    }
+
+    async function joinRoom() {
+      const code = document.getElementById("codeInput").value.trim().toUpperCase();
+      if (!code) return;
+      initFirebase();
+      currentRoomCode = code;
+      roomRef = db.ref('rooms/' + code);
+      mySlot = 2;
+      const snap = await roomRef.once('value');
+      if (!snap.exists()) { alert("Room not found!"); return; }
+      roomRef.child('players/2').update({connected:true});
+      roomRef.on('value', snapshot => handleRoomUpdate(snapshot.val()));
+    }
+
+    function handleRoomUpdate(data) {
+      if (!data) return;
+      currentTurn = data.turn || 1;
+      myChar = mySlot === 1 ? data.char1 : data.char2;
+      opponentChar = mySlot === 1 ? data.char2 : data.char1;
+
+      if (!data.players || !data.players[mySlot] || !data.players[mySlot].connected) {
+        showWaitingScreen();
+        return;
+      }
+      if (!document.getElementById("gameUI")) renderGameUI();
+      const isMyTurn = currentTurn === mySlot;
+      document.getElementById("turnTitle").innerHTML = isMyTurn 
+        ? `YOUR TURN — Ask your ONE question!<br><span style="color:#ffff00">Friend is looking at YOUR forehead</span>` 
+        : `WAITING FOR FRIEND — They are guessing<br><span style="color:#00ffff">Your forehead is hidden from you</span>`;
+      updateOpponentImage();
+    }
+
+    function renderGameUI() {
+      document.getElementById("app").innerHTML = `
+        <div class="status">ROOM: <span style="color:#ffff00">${currentRoomCode}</span> • Share on Discord!</div>
+        <div style="margin-bottom:20px;"><h3 id="turnTitle" style="margin-bottom:15px;">WAITING...</h3></div>
+        <div class="forehead-row">
+          <div>
+            <div class="label">YOUR FOREHEAD</div>
+            <div class="character-display">
+              <div class="hidden-overlay">
+                <div style="font-size:5rem;margin-bottom:10px;">❓</div>
+                HIDDEN
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="label">FRIEND'S FOREHEAD</div>
+            <div class="character-display" id="opponentChar"></div>
+          </div>
+        </div>
+        <p>Ask your ONE question out loud → they answer via voice → then guess:</p>
+        <input type="text" id="guessInput" placeholder="TYPE YOUR GUESS" onkeypress="if(event.key==='Enter') makeGuess()">
+        <button onclick="makeGuess()">LOCK IN GUESS 🔥</button>
+        <button onclick="skipTurn()">Skip Turn (wrong guess)</button>
+        <div class="log" id="log"></div>
+      `;
+      updateOpponentImage();
+    }
+
+    function updateOpponentImage() {
+      const display = document.getElementById("opponentChar");
+      if (!display || !opponentChar) return;
+
+      const proxied = getProxiedImg(opponentChar.img);
+      display.innerHTML = `
+        <div class="loading">LOADING PICTURE...</div>
+        <img src="${proxied}" alt="${opponentChar.name}" 
+             onload="this.previousElementSibling.style.display='none'; this.style.opacity=1;"
+             onerror="this.style.display='none'; this.parentNode.innerHTML = '<div class=\\'fallback-name\\'>${opponentChar.name}</div>';">
+      `;
+    }
+
+    function makeGuess() {
+      const guess = document.getElementById("guessInput").value.trim();
+      if (!guess) return;
+      const correct = myChar.name.toLowerCase();
+      if (guess.toLowerCase() === correct) {
+        document.getElementById("app").innerHTML = `
+          <h1 class="winner">🎉 YOU GOT IT! 🎉</h1>
+          <p><strong>${myChar.name}</strong> was on YOUR forehead!</p>
+          <div class="character-display" style="width:280px;height:280px;margin:20px auto;">
+            <img src="${getProxiedImg(myChar.img)}" alt="${myChar.name}" 
+                 onload="this.style.opacity=1" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\\'fallback-name\\' style=\\'font-size:3rem\\'>${myChar.name}</div>';">
+          </div>
+          <button onclick="newRound()">NEW ROUND IN SAME ROOM</button>
+        `;
+      } else {
+        const log = document.getElementById("log");
+        log.innerHTML += `<p style="color:#ff00ff;">❌ WRONG — You said: ${guess}</p>`;
+        document.getElementById("guessInput").value = "";
+        skipTurn();
+      }
+    }
+
+    function skipTurn() {
+      const newTurn = currentTurn === 1 ? 2 : 1;
+      roomRef.update({turn: newTurn});
+    }
+
+    function newRound() {
+      const shuffled = [...characters].sort(() => Math.random() - 0.5);
+      roomRef.update({ char1: shuffled[0], char2: shuffled[1], turn: 1, guesses: [] });
+    }
+
+    function showWaitingScreen() {
+      document.getElementById("app").innerHTML = `
+        <h2>ROOM CODE: <span style="color:#ffff00;font-size:3rem">${currentRoomCode || 'LOADING...'}</span></h2>
+        <p>Share this code with your friend on Discord!</p>
+        <div style="margin:40px 0;font-size:1.4rem;color:#00ffff;">Waiting for opponent to join...</div>
+        <button onclick="showHome()">CANCEL &amp; BACK</button>
+      `;
+    }
+
+    window.onload = showHome;
+  </script>
+</body>
+</html>
