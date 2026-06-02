@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THE BEST IN JEST • ONLINE V6</title>
+  <title>THE BEST IN JEST • ONLINE V7</title>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <style>
@@ -28,7 +28,7 @@
   </style>
 </head>
 <body>
-  <div class="header">THE BEST IN JEST • ONLINE V6</div>
+  <div class="header">THE BEST IN JEST • ONLINE V7</div>
   <div class="container" id="app"></div>
 
   <script>
@@ -79,7 +79,7 @@
     ];
 
     function getProxiedImg(url) {
-      return `https://corsproxy.io/?` + encodeURIComponent(url);
+      return `https://proxy.duckduckgo.com/iu/?u=` + encodeURIComponent(url);
     }
 
     function initFirebase() { app = firebase.initializeApp(firebaseConfig); db = firebase.database(); }
@@ -93,7 +93,7 @@
         <h2>READY TO GO REMOTE?</h2>
         <button onclick="createRoom()">CREATE ROOM (Host)</button>
         <button onclick="showJoinScreen()">JOIN ROOM (Friend)</button>
-        <p style="margin-top:40px;color:#00ffff;">V6 • New CORS proxy = pictures load 100% on Netlify!</p>
+        <p style="margin-top:40px;color:#00ffff;">V7 • DuckDuckGo proxy = REAL PICTURES EVERY TIME on GitHub!</p>
       `;
     }
 
